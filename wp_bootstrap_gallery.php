@@ -10,67 +10,6 @@
  * License URI: http://www.gnu.org/licenses/gpl-2.0.txt
  */
 
-function bootstrap_gallery_shortcode($atts) {
- 
-    global $post;
- 
-    extract(shortcode_atts(array(
-        'orderby' => 'menu_order ASC, ID ASC',
-        'id' => $post->ID,
-        'itemtag' => 'dl',
-        'icontag' => 'dt',
-        'captiontag' => 'dd',
-        'columns' => 3,
-        'size' => 'medium',
-        'link' => 'file'
-    ), $atts));
- 
-    $args = array(
-        'post_type' => 'attachment',
-        'post_parent' => $id,
-        'numberposts' => -1,
-        'orderby' => $orderby
-    ); 
-    $images = get_posts($args);
-    $image_count = count($images);
-    $heading = '<h1>'.$image_count.' Images</h1>';
-    $clearfix = '<div class="clearfix"></div>';
-    $ul_thumbnail = '<ul class="thumbnails">';
-    foreach ( $images as $image ) {     
-        $caption = $image->post_excerpt;
- 
-        $description = $image->post_content;
-        if($description == '') $description = $title;
-
-        $image_alt = get_post_meta($image->ID,'_wp_attachment_image_alt', true);
- 
-        $img = wp_get_attachment_image_src($image->ID, $size);
-        
-        // render your gallery here
-        $li_open = '<li class="span4">';
-        $image_html = "<img src='$img[0]' alt='$image_alt' />";
-        $li_close = '</li>';
-        
-        $img_complete = $li_open.$image_html.$li_close;
-        $image_set = $image_set.$img_complete;
-        
-    }
-    $ul_close = '</ul>';
-    
-    // RETURN THE RESULTS
-    return $clearfix.$heading.$ul_thumbnail.$image_set.$ul_close;
-}
-
-/**
- * Class Name: wp_bootstrap_gallery
- * GitHub URI: https://github.com/twittem/wp-bootstrap-gallery
- * Description: A custom Wordpress gallery for dynamic thumbnail layout using Twitter Bootstrap 2 thumbnail layouts.
- * Version: 1.0
- * Author: Edward McIntyre - @twittem
- * License: GPL-2.0+
- * License URI: http://www.gnu.org/licenses/gpl-2.0.txt
- */
-
 function wp_bootstrap_gallery( $content, $attr ) {
 	global $instance, $post;
 	$instance++;
@@ -219,21 +158,16 @@ function wp_bootstrap_gallery( $content, $attr ) {
             $output .="</ul><ul class='thumbnails'>";
             $row_break = $row_break+$row_break;
         }
-        
+
 		$attachment_image = wp_get_attachment_image( $id, 'full');
-		$attachment_link = wp_get_attachment_link( $id, 'full', ! ( isset( $attr['link'] ) AND 'file' == $attr['link'] ) );
-
+		// $attachment_link = wp_get_attachment_link( $id, 'full', ! ( isset( $attr['link'] ) AND 'file' == $attr['link'] ) );
+        $attachment_page = get_attachment_link($id);
 		$output .= "<li class='span" . $span_array[$attachment_count] . "'>";
-		$output .= $attachment_link . "\n";
-		$output .= "</li>\n";
-
-		/*if(count($attachments) >= 7 && $attachment_count == 3){
-			$attachment_count = 3;
-		} else {*/
-        $attachment_count++;
-		//}
+		$output .= "<a href='$attachment_page' class='thumbnail'>".$attachment_image . "</a>\n";
+        $output .= "</li>\n";
         
-            
+        $attachment_count++;
+
 	}
 
 	$output .= "</ul>\n";
