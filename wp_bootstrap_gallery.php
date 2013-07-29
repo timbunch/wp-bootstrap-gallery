@@ -158,6 +158,8 @@ function wp_bootstrap_gallery( $content, $attr ) {
             $output .="</ul><ul class='thumbnails'>";
             $row_break = $row_break+$row_break;
         }
+        if (!$span_array[$attachment_count])
+            $attachment_count = 0; // Reset the attachment count if null
 
 		$attachment_image = wp_get_attachment_image( $id, 'full');
 		// $attachment_link = wp_get_attachment_link( $id, 'full', ! ( isset( $attr['link'] ) AND 'file' == $attr['link'] ) );
